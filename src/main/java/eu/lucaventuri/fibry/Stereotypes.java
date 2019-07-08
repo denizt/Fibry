@@ -261,10 +261,13 @@ public class Stereotypes {
             return runOnceWithThis(thisActor -> {
                 try (ServerSocket serverSocket = new ServerSocket(port)) {
                     while (!thisActor.isExiting()) {
-                        Socket clientSocket = serverSocket.accept();
-                        Actor<Socket, Void, S> worker = anonymous().initialState(stateSupplier == null ? null : stateSupplier.get()).newActor(workersLogic);
-
-                        worker.sendMessage(clientSocket);
+                        // This one is tricky because we would expect the ServerSocket to close all child sockets
+                        // recursively on close, unfortunately this is not the case.
+                        // *All* sockets created by accept must be closed independently to avoid a leak
+                        try (Socket clientSocket = serverSocket.accept()) {
+                            Actor<Socket, Void, S> worker = anonymous().initialState(stateSupplier == null ? null : stateSupplier.get()).newActor(workersLogic);
+                            worker.sendMessage(clientSocket);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
