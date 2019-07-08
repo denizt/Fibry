@@ -3,15 +3,15 @@ package eu.lucaventuri.fibry;
 import java.util.function.Consumer;
 
 public interface PartialActor<T, S> {
-    public void sendMessage(T message);
+    void sendMessage(T message);
 
-    public void execAsync(Consumer<PartialActor<T, S>> worker);
+    void execAsync(Consumer<PartialActor<T, S>> worker);
 
-    public void execAsync(Runnable worker);
+    void execAsync(Runnable worker);
 
-    public void sendPoisonPill();
+    void sendPoisonPill();
 
-    public S getState();
+    S getState();
 
-    public void askExit();
+    void askExit();
 }

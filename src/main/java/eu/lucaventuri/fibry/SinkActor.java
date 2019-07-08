@@ -1,13 +1,13 @@
 package eu.lucaventuri.fibry;
 
 public interface SinkActor<S> {
-    public void execAsync(Runnable worker);
+    void execAsync(Runnable worker);
 
-    public S getState();
+    S getState();
 
-    public void askExit();
+    void askExit();
 
-    public boolean isExiting();
+    boolean isExiting();
 
-    public void waitForExit();
+    void waitForExit();
 }

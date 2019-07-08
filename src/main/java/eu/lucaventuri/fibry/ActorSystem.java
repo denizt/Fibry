@@ -132,12 +132,11 @@ public class ActorSystem {
     // Name and strategy as supplied, initialState: null
     public static class NamedStrategyActorCreator extends NamedStateActorCreator<Void> {
         private final String name;  // Can be null
-        private final CreationStrategy strategy;  // Can be null
 
         private NamedStrategyActorCreator(String name, CreationStrategy strategy) {
             super(name, strategy, null);
             this.name = name;
-            this.strategy = strategy;
+            // Can be null
         }
 
         public <S> NamedStateActorCreator<S> initialState(S state) {
