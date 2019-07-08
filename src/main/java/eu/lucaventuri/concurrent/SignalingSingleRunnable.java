@@ -3,13 +3,22 @@ package eu.lucaventuri.concurrent;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-/** Runnable that can run only once, and that can signal when it has run */
+/**
+ * Runnable that can run only once, and that can signal when it has run
+ */
 public class SignalingSingleRunnable implements Runnable {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final Runnable runnable;
 
     private SignalingSingleRunnable(Runnable runnable) {
         this.runnable = runnable;
+    }
+
+    public static SignalingSingleRunnable of(Runnable runnable) {
+        if (runnable instanceof SignalingSingleRunnable)
+            return (SignalingSingleRunnable) runnable;
+
+        return new SignalingSingleRunnable(runnable);
     }
 
     @Override
@@ -32,12 +41,5 @@ public class SignalingSingleRunnable implements Runnable {
 
     public boolean isDone() {
         return latch.getCount() == 0;
-    }
-
-    public static SignalingSingleRunnable of(Runnable runnable) {
-        if (runnable instanceof SignalingSingleRunnable)
-            return (SignalingSingleRunnable) runnable;
-
-        return new SignalingSingleRunnable(runnable);
     }
 }

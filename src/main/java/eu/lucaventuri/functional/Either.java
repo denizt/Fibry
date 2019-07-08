@@ -5,7 +5,9 @@ import eu.lucaventuri.common.Exceptions;
 
 import java.util.Optional;
 
-/** Functional Either, containing or one type or another */
+/**
+ * Functional Either, containing or one type or another
+ */
 public class Either<L, R> {
     private final L left;
     private final R right;

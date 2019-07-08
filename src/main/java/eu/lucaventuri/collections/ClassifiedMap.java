@@ -80,14 +80,14 @@ public class ClassifiedMap {
         verify();
         T value = scanList(filter, mapByClass.get(cls));
 
-        if (value!=null)
+        if (value != null)
             return value;
 
         for (Class clz : mapByClass.keySet()) {
-            if (cls!=clz && cls.isAssignableFrom(clz)) {
+            if (cls != clz && cls.isAssignableFrom(clz)) {
                 value = scanList(filter, mapByClass.get(clz));
 
-                if (value!=null)
+                if (value != null)
                     return value;
             }
         }
@@ -96,7 +96,7 @@ public class ClassifiedMap {
     }
 
     private <T> T scanList(Predicate<T> filter, LinkedList<LinkedList.Node<Object>> listByClass) {
-        if (listByClass==null)
+        if (listByClass == null)
             return null;
 
         for (LinkedList.Node<Object> n : listByClass) {
@@ -137,13 +137,13 @@ public class ClassifiedMap {
     }
 
     private <K, E extends K, T> K scanAndCovertList(Class cls, Predicate<E> filter, Function<T, K> converter, LinkedList<LinkedList.Node<Object>> listByClass) {
-        if (listByClass==null)
+        if (listByClass == null)
             return null;
 
         for (LinkedList.Node<Object> n : listByClass) {
             K valueConverted = converter.apply((T) n.value);
 
-            if (valueConverted != null && filter.test((E)valueConverted)) {
+            if (valueConverted != null && filter.test((E) valueConverted)) {
                 listByClass.removeFirstByValue(n);
                 list.remove(n);
                 return valueConverted;

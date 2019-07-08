@@ -337,13 +337,13 @@ public class TestLinkedList {
             new Thread(() -> {
                 for (int i = batchStart; i < batchEnd; i++) {
                     Integer n;
-                    int num=0;
+                    int num = 0;
 
                     do {
                         n = list.removeHead();
                         num++;
 
-                        if (num%100==0)
+                        if (num % 100 == 0)
                             Exceptions.silence(() -> Thread.sleep(1));
                     } while (n == null);
 

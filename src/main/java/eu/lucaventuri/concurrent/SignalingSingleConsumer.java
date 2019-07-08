@@ -4,14 +4,22 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-/** Runnable that can run only once, and that can signal when it has run */
+/**
+ * Runnable that can run only once, and that can signal when it has run
+ */
 public class SignalingSingleConsumer<S> implements Consumer<S> {
     private final CountDownLatch latch = new CountDownLatch(1);
-    private final Consumer worker
-            ;
+    private final Consumer worker;
 
     private SignalingSingleConsumer(Consumer worker) {
         this.worker = worker;
+    }
+
+    public static <S> SignalingSingleConsumer<S> of(Consumer<S> worker) {
+        if (worker instanceof SignalingSingleConsumer)
+            return (SignalingSingleConsumer<S>) worker;
+
+        return new SignalingSingleConsumer<S>(worker);
     }
 
     @Override
@@ -34,12 +42,5 @@ public class SignalingSingleConsumer<S> implements Consumer<S> {
 
     public boolean isDone() {
         return latch.getCount() == 0;
-    }
-
-    public static <S> SignalingSingleConsumer<S> of(Consumer<S> worker) {
-        if (worker instanceof SignalingSingleConsumer)
-            return (SignalingSingleConsumer<S>) worker;
-
-        return new SignalingSingleConsumer<S>(worker);
     }
 }

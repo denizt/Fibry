@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import eu.lucaventuri.common.Exceptions;
 import eu.lucaventuri.common.SystemUtils;
+import eu.lucaventuri.fibry.ActorSystem.NamedStateActorCreator;
+import eu.lucaventuri.fibry.ActorSystem.NamedStrategyActorCreator;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,12 +19,24 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static eu.lucaventuri.fibry.CreationStrategy.*;
-import eu.lucaventuri.fibry.ActorSystem.*;
 
 // Connection acceptor
 // Embedded web server acceptor
 // Anonymous workers
 public class Stereotypes {
+    public static NamedStereotype threads() {
+        return new NamedStereotype(THREAD);
+    }
+
+    public static NamedStereotype auto() {
+        return new NamedStereotype(AUTO);
+    }
+
+    public static NamedStereotype fibers() {
+
+        return new NamedStereotype(FIBER);
+    }
+
     public static class HttpWorker {
         public final String context;
         public final HttpHandler handler;
@@ -52,7 +66,7 @@ public class Stereotypes {
 
         /**
          * @param actorLogic Logic associated to each actor (no value returned as a result of the message)
-         * @param <T> Message type
+         * @param <T>        Message type
          * @return a supplier of actors that are going to use the specified logic
          */
         public <T> Supplier<Actor<T, Void, Void>> workersCreator(Consumer<T> actorLogic) {
@@ -63,7 +77,7 @@ public class Stereotypes {
 
         /**
          * @param actorLogic Logic associated to each actor
-         * @param <T> Message type
+         * @param <T>        Message type
          * @return a consumer that for each message accepted will create a new actor that will process it.
          * When appropriate, this is a simple way to run parallel processing, as long as you don't need to know the result
          */
@@ -75,8 +89,8 @@ public class Stereotypes {
 
         /**
          * @param actorLogic Logic associated to each actor (a value can be returned as a result of the message)
-         * @param <T> Message type
-         * @param <R> Return type
+         * @param <T>        Message type
+         * @param <R>        Return type
          * @return a supplier of actors that are going to use the specified logic
          */
         public <T, R> Supplier<Actor<T, R, Void>> workersWithReturnCreator(Function<T, R> actorLogic) {
@@ -87,7 +101,7 @@ public class Stereotypes {
 
         /**
          * @param actorLogic Logic associated to each actor
-         * @param <T> Message type
+         * @param <T>        Message type
          * @return a function that for each message accepted will create a new actor that will process it.
          * When appropriate, this is a simple way to run parallel processing
          */
@@ -102,7 +116,7 @@ public class Stereotypes {
          * The workers need to implement the HttpHandler interface.
          * This method is not recommended for a real server, but if you need something simple, it can be useful.
          *
-         * @param port HTTP port to open
+         * @param port    HTTP port to open
          * @param workers pairs of context and handler, associating a path to a worker
          * @throws IOException
          */
@@ -126,7 +140,7 @@ public class Stereotypes {
          * The workers need to implement Function<HttpExchange, String>, therefore they can just return a string (so they are only useful on very simple cases).
          * This method is not recommended for a real server, but if you need something simple, it can be useful.
          *
-         * @param port HTTP port to open
+         * @param port    HTTP port to open
          * @param workers pairs of context and handler, associating a path to a worker
          * @throws IOException
          */
@@ -152,7 +166,9 @@ public class Stereotypes {
             server.start();
         }
 
-        /** Creates a named actor that does not receive messages; this is useful to execute code in a remote thread */
+        /**
+         * Creates a named actor that does not receive messages; this is useful to execute code in a remote thread
+         */
         public <S> SinkActor<S> sink(String name, S state) {
             NamedStateActorCreator<S> config = named(name).initialState(state);
 
@@ -160,7 +176,9 @@ public class Stereotypes {
             });
         }
 
-        /** Creates an actor that does not receive messages; this is useful to execute code in a remote thread */
+        /**
+         * Creates an actor that does not receive messages; this is useful to execute code in a remote thread
+         */
         public <S> SinkActor<S> sink(S state) {
             NamedStateActorCreator<S> config = anonymous().initialState(state);
 
@@ -168,7 +186,9 @@ public class Stereotypes {
             });
         }
 
-        /** Creates an actor that runs a Runnable, once */
+        /**
+         * Creates an actor that runs a Runnable, once
+         */
         public SinkActor<Void> runOnce(Runnable run) {
             SinkActor<Void> actor = sink(null);
 
@@ -195,12 +215,16 @@ public class Stereotypes {
             return actor;
         }
 
-        /** Creates an actor that runs a Runnable forever, every scheduleMs ms */
+        /**
+         * Creates an actor that runs a Runnable forever, every scheduleMs ms
+         */
         public SinkActor<Void> schedule(Runnable run, long scheduleMs) {
             return schedule(run, scheduleMs, Long.MAX_VALUE);
         }
 
-        /** Creates an actor that runs a Runnable maxTimes or until somebody asks for exit (this is controlled only in between executions); the actor is scheduled to run every scheduleMs ms */
+        /**
+         * Creates an actor that runs a Runnable maxTimes or until somebody asks for exit (this is controlled only in between executions); the actor is scheduled to run every scheduleMs ms
+         */
         public SinkActor<Void> schedule(Runnable run, long scheduleMs, long maxTimes) {
             SinkActor<Void> actor = sink(null);
 
@@ -227,10 +251,10 @@ public class Stereotypes {
         /**
          * Creates an actor that can accept new TCP connections on the specified port and spawn a new actor for each connection.
          *
-         * @param port TCP port
-         * @param workersLogic Logic of each worker
+         * @param port          TCP port
+         * @param workersLogic  Logic of each worker
          * @param stateSupplier Supplier able to create a new state for each worker
-         * @param <S> Type of state
+         * @param <S>           Type of state
          * @return the acceptor actor
          */
         public <S> SinkActor<Void> tcpAcceptor(int port, Consumer<Socket> workersLogic, Supplier<S> stateSupplier) {
@@ -255,18 +279,5 @@ public class Stereotypes {
         private NamedStrategyActorCreator named(String name) {
             return ActorSystem.named(name).strategy(strategy);
         }
-    }
-
-    public static NamedStereotype threads() {
-        return new NamedStereotype(THREAD);
-    }
-
-    public static NamedStereotype auto() {
-        return new NamedStereotype(AUTO);
-    }
-
-    public static NamedStereotype fibers() {
-
-        return new NamedStereotype(FIBER);
     }
 }

@@ -77,10 +77,10 @@ final public class Exceptions {
     /**
      * Executes a callable, and in case of exception it returns a result provided by a supplier
      *
-     * @param callable Callable to execute
+     * @param callable        Callable to execute
      * @param defaultSupplier Supplier a to provide a default value, in case of exception
-     * @param <T> Type to return
-     * @param <E> Exception that can be thrown
+     * @param <T>             Type to return
+     * @param <E>             Exception that can be thrown
      * @return the result of the callable in case of success, and of the supplier if an exception is thrown
      */
     public static <T, E extends Throwable> T orElse(CallableEx<T, E> callable, Supplier<T> defaultSupplier) {
@@ -96,10 +96,10 @@ final public class Exceptions {
     /**
      * Executes a callable, and in case of exception it returns a default result
      *
-     * @param callable Callable to execute
+     * @param callable     Callable to execute
      * @param defaultValue default value, in case of exception
-     * @param <T> Type to return
-     * @param <E> Exception that can be thrown
+     * @param <T>          Type to return
+     * @param <E>          Exception that can be thrown
      * @return the result of the callable in case of success, or the default value if an exception is thrown
      */
     public static <T, E extends Throwable> T orElseValuie(CallableEx<T, E> callable, T defaultValue) {
@@ -112,7 +112,9 @@ final public class Exceptions {
         }
     }
 
-    /** Assert that a certain condition is met, or throw an exception */
+    /**
+     * Assert that a certain condition is met, or throw an exception
+     */
     public static void assertAndThrow(boolean check, String error) {
         assert check : error;
 

@@ -18,7 +18,7 @@ public class TestStereotypes {
     @Test
     public void testWorkers() throws ExecutionException, InterruptedException {
         final AtomicInteger val = new AtomicInteger();
-           Supplier<Actor<Integer, Void, Void>> master = Stereotypes.auto().workersCreator(val::addAndGet);
+        Supplier<Actor<Integer, Void, Void>> master = Stereotypes.auto().workersCreator(val::addAndGet);
 
         master.get().sendMessageReturn(1).get();
         master.get().sendMessageReturn(2).get();

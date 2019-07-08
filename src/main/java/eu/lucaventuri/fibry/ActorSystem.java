@@ -22,6 +22,63 @@ public class ActorSystem {
     private static final ConcurrentHashMap<String, BlockingDeque> namedQueues = new ConcurrentHashMap<>();
     private static final Set<String> actorNamesInUse = ConcurrentHashSet.build();
 
+    public static NamedActorCreator named(String name) {
+        return new NamedActorCreator(name);
+    }
+
+    public static NamedActorCreator anonymous() {
+        return new NamedActorCreator(null);
+    }
+
+    protected static String registerActorName(String actorName) {
+        if (actorName == null)
+            return null;
+
+        boolean newActor = actorNamesInUse.add(actorName);
+
+        if (!newActor)
+            throw new IllegalArgumentException("Actors name already in use!");
+
+        return actorName;
+    }
+
+    private static <T, R, S> LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>> getOrCreateActorQueue(String actorName) {
+        if (actorName == null)
+            return new LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>>();
+
+        return (LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>>) namedQueues.computeIfAbsent(actorName, name -> new LinkedBlockingDeque<Either3<Consumer, T, MessageWithAnswer<T, R>>>());
+    }
+
+    private static void enforceName(String actorName) {
+        if (actorName == null)
+            throw new IllegalArgumentException("The actor name cannot be null as this method cannot support anonymous actors");
+    }
+
+    public static <T> void sendMessage(String actorName, T message) {
+        enforceName(actorName);
+        ActorUtils.sendMessage(getOrCreateActorQueue(actorName), message);
+    }
+
+    public static <T, R> CompletableFuture<R> sendMessageReturn(String actorName, T message) {
+        enforceName(actorName);
+        return ActorUtils.sendMessageReturn(getOrCreateActorQueue(actorName), message);
+    }
+
+    public static <S> void execAsync(String actorName, Consumer<S> worker) {
+        enforceName(actorName);
+        ActorUtils.execAsync(getOrCreateActorQueue(actorName), worker);
+    }
+
+    public static <S> void execAndWait(String actorName, Consumer<S> worker) {
+        enforceName(actorName);
+        ActorUtils.execAndWait(getOrCreateActorQueue(actorName), worker);
+    }
+
+    public static <T, S> CompletableFuture<Void> execFuture(String actorName, Consumer<S> worker) {
+        enforceName(actorName);
+        return ActorUtils.execFuture(getOrCreateActorQueue(actorName), worker);
+    }
+
     public static class NamedStateActorCreator<S> {
         private final S initialState;
         private final CreationStrategy strategy;
@@ -104,62 +161,5 @@ public class ActorSystem {
         public NamedStrategyActorCreator strategy(CreationStrategy strategy) {
             return new NamedStrategyActorCreator(name, strategy);
         }
-    }
-
-    public static NamedActorCreator named(String name) {
-        return new NamedActorCreator(name);
-    }
-
-    public static NamedActorCreator anonymous() {
-        return new NamedActorCreator(null);
-    }
-
-    protected static String registerActorName(String actorName) {
-        if (actorName == null)
-            return null;
-
-        boolean newActor = actorNamesInUse.add(actorName);
-
-        if (!newActor)
-            throw new IllegalArgumentException("Actors name already in use!");
-
-        return actorName;
-    }
-
-    private static <T, R, S> LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>> getOrCreateActorQueue(String actorName) {
-        if (actorName == null)
-            return new LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>>();
-
-        return (LinkedBlockingDeque<Either3<Consumer<S>, T, MessageWithAnswer<T, R>>>) namedQueues.computeIfAbsent(actorName, name -> new LinkedBlockingDeque<Either3<Consumer, T, MessageWithAnswer<T, R>>>());
-    }
-
-    private static void enforceName(String actorName) {
-        if (actorName == null)
-            throw new IllegalArgumentException("The actor name cannot be null as this method cannot support anonymous actors");
-    }
-
-    public static <T> void sendMessage(String actorName, T message) {
-        enforceName(actorName);
-        ActorUtils.sendMessage(getOrCreateActorQueue(actorName), message);
-    }
-
-    public static <T, R> CompletableFuture<R> sendMessageReturn(String actorName, T message) {
-        enforceName(actorName);
-        return ActorUtils.sendMessageReturn(getOrCreateActorQueue(actorName), message);
-    }
-
-    public static <S> void execAsync(String actorName, Consumer<S> worker) {
-        enforceName(actorName);
-        ActorUtils.execAsync(getOrCreateActorQueue(actorName), worker);
-    }
-
-    public static <S> void execAndWait(String actorName, Consumer<S> worker) {
-        enforceName(actorName);
-        ActorUtils.execAndWait(getOrCreateActorQueue(actorName), worker);
-    }
-
-    public static <T, S> CompletableFuture<Void> execFuture(String actorName, Consumer<S> worker) {
-        enforceName(actorName);
-        return ActorUtils.execFuture(getOrCreateActorQueue(actorName), worker);
     }
 }

@@ -3,9 +3,13 @@ package eu.lucaventuri.fibry;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Strategy used to create the actors */
+/**
+ * Strategy used to create the actors
+ */
 public enum CreationStrategy {
-    /** One thread per actor */
+    /**
+     * One thread per actor
+     */
     THREAD {
         @Override
         <T, R, S> BaseActor<T, R, S> start(BaseActor<T, R, S> actor) {
@@ -14,7 +18,9 @@ public enum CreationStrategy {
             return actor;
         }
     },
-    /** One fiber per actor */
+    /**
+     * One fiber per actor
+     */
     FIBER {
         @Override
         <T, R, S> BaseActor<T, R, S> start(BaseActor<T, R, S> actor) {
@@ -25,7 +31,9 @@ public enum CreationStrategy {
             return actor;
         }
     },
-    /** If fibers are available, the it uses FIBER else it uses THREAD */
+    /**
+     * If fibers are available, the it uses FIBER else it uses THREAD
+     */
     AUTO {
         @Override
         <T, R, S> BaseActor<T, R, S> start(BaseActor<T, R, S> actor) {
@@ -33,10 +41,14 @@ public enum CreationStrategy {
         }
     };
 
-    /** Starts an actor */
+    /**
+     * Starts an actor
+     */
     abstract <T, R, S> BaseActor<T, R, S> start(BaseActor<T, R, S> actor);
 
-    /** Return the strategies that are available */
+    /**
+     * Return the strategies that are available
+     */
     public Iterable<CreationStrategy> available() {
         List<CreationStrategy> list = new ArrayList<>();
 

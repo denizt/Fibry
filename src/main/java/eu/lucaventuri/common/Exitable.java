@@ -38,7 +38,9 @@ public class Exitable {
         finished.countDown();
     }
 
-    /** Wait for the task to finish, without asking for it */
+    /**
+     * Wait for the task to finish, without asking for it
+     */
     public void waitForExit() {
         try {
             finished.await();
@@ -47,7 +49,9 @@ public class Exitable {
         }
     }
 
-    /** Wait for the task to finish, without asking for it */
+    /**
+     * Wait for the task to finish, without asking for it
+     */
     public void waitForExit(long timeout, TimeUnit unit) {
         try {
             finished.await(timeout, unit);

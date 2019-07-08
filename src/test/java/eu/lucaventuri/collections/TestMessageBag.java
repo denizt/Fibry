@@ -1,16 +1,20 @@
 package eu.lucaventuri.collections;
 
 import eu.lucaventuri.common.SystemUtils;
-import eu.lucaventuri.functional.Either;
 import eu.lucaventuri.fibry.MessageBag;
+import eu.lucaventuri.functional.Either;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
-class A { }
-class B extends A {}
+import static org.junit.Assert.assertEquals;
+
+class A {
+}
+
+class B extends A {
+}
 
 public class TestMessageBag {
     @Test
@@ -81,28 +85,28 @@ public class TestMessageBag {
         }).start();
 
         // From queue
-        assertEquals(2, (int)silo.receive(Integer.class, v -> true));
-        assertEquals(3, (int)silo.receive(Integer.class, v -> true));
-        assertEquals(4, (int)silo.receive(Integer.class, v -> true));
-        assertEquals(6, (int)silo.receive(Integer.class, v -> v.intValue()%2==0));
-        assertEquals(10, (int)silo.receive(Integer.class, v -> v.intValue()%2==0));
-        assertEquals(8, (int)silo.receive(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(2, (int) silo.receive(Integer.class, v -> true));
+        assertEquals(3, (int) silo.receive(Integer.class, v -> true));
+        assertEquals(4, (int) silo.receive(Integer.class, v -> true));
+        assertEquals(6, (int) silo.receive(Integer.class, v -> v.intValue() % 2 == 0));
+        assertEquals(10, (int) silo.receive(Integer.class, v -> v.intValue() % 2 == 0));
+        assertEquals(8, (int) silo.receive(Integer.class, v -> v.intValue() % 2 == 0));
 
         // From map
         assertEquals("A", silo.receive(String.class, v -> true));
-        assertEquals("D", silo.receive(String.class, v -> v.length()==1));
-        assertEquals("E", silo.receive(String.class, v -> v.length()==1));
-        assertEquals("F", silo.receive(String.class, v -> v.length()==1));
-        assertEquals("G", silo.receive(String.class, v -> v.length()==1));
+        assertEquals("D", silo.receive(String.class, v -> v.length() == 1));
+        assertEquals("E", silo.receive(String.class, v -> v.length() == 1));
+        assertEquals("F", silo.receive(String.class, v -> v.length() == 1));
+        assertEquals("G", silo.receive(String.class, v -> v.length() == 1));
 
         // Queue
-        assertEquals(12, (int)silo.receive(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(12, (int) silo.receive(Integer.class, v -> v.intValue() % 2 == 0));
         // Map
-        assertEquals("H", silo.receive(String.class, v -> v.length()==1));
+        assertEquals("H", silo.receive(String.class, v -> v.length() == 1));
         // Queue
-        assertEquals("J", silo.receive(String.class, v -> v.length()==1));
+        assertEquals("J", silo.receive(String.class, v -> v.length() == 1));
         // Map
-        assertEquals(14, (int)silo.receive(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(14, (int) silo.receive(Integer.class, v -> v.intValue() % 2 == 0));
     }
 
     @Test
@@ -140,30 +144,29 @@ public class TestMessageBag {
         }).start();
 
 // From queue
-        assertEquals(2, (int)silo.receiveAndConvert(Integer.class, v -> true));
-        assertEquals(3, (int)silo.receiveAndConvert(Integer.class, v -> true));
-        assertEquals(4, (int)silo.receiveAndConvert(Integer.class, v -> true));
-        assertEquals(6, (int)silo.receiveAndConvert(Integer.class, v -> v.intValue()%2==0));
-        assertEquals(10, (int)silo.receiveAndConvert(Integer.class, v -> v.intValue()%2==0));
-        assertEquals(8, (int)silo.receiveAndConvert(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(2, (int) silo.receiveAndConvert(Integer.class, v -> true));
+        assertEquals(3, (int) silo.receiveAndConvert(Integer.class, v -> true));
+        assertEquals(4, (int) silo.receiveAndConvert(Integer.class, v -> true));
+        assertEquals(6, (int) silo.receiveAndConvert(Integer.class, v -> v.intValue() % 2 == 0));
+        assertEquals(10, (int) silo.receiveAndConvert(Integer.class, v -> v.intValue() % 2 == 0));
+        assertEquals(8, (int) silo.receiveAndConvert(Integer.class, v -> v.intValue() % 2 == 0));
 
         // From map
         assertEquals("A", silo.receiveAndConvert(String.class, v -> true));
-        assertEquals("D", silo.receiveAndConvert(String.class, v -> v.length()==1));
-        assertEquals("E", silo.receiveAndConvert(String.class, v -> v.length()==1));
-        assertEquals("F", silo.receiveAndConvert(String.class, v -> v.length()==1));
-        assertEquals("G", silo.receiveAndConvert(String.class, v -> v.length()==1));
+        assertEquals("D", silo.receiveAndConvert(String.class, v -> v.length() == 1));
+        assertEquals("E", silo.receiveAndConvert(String.class, v -> v.length() == 1));
+        assertEquals("F", silo.receiveAndConvert(String.class, v -> v.length() == 1));
+        assertEquals("G", silo.receiveAndConvert(String.class, v -> v.length() == 1));
 
         // Queue
-        assertEquals(12, (int)silo.receiveAndConvert(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(12, (int) silo.receiveAndConvert(Integer.class, v -> v.intValue() % 2 == 0));
         // Map
-        assertEquals("H", silo.receiveAndConvert(String.class, v -> v.length()==1));
+        assertEquals("H", silo.receiveAndConvert(String.class, v -> v.length() == 1));
         // Queue
-        assertEquals("J", silo.receiveAndConvert(String.class, v -> v.length()==1));
+        assertEquals("J", silo.receiveAndConvert(String.class, v -> v.length() == 1));
         // Map
-        assertEquals(14, (int)silo.receiveAndConvert(Integer.class, v -> v.intValue()%2==0));
+        assertEquals(14, (int) silo.receiveAndConvert(Integer.class, v -> v.intValue() % 2 == 0));
     }
-
 
 
     @Test
@@ -191,7 +194,7 @@ public class TestMessageBag {
         assertEquals(a1, silo.receive(A.class, v -> true));
         assertEquals(a2, silo.receive(A.class, v -> true));
         assertEquals(b1, silo.receive(A.class, v -> true));
-        assertEquals(1, (int)silo.receive(Integer.class, v -> true));
+        assertEquals(1, (int) silo.receive(Integer.class, v -> true));
 
         // From map
         assertEquals(a3, silo.receive(A.class, v -> true));

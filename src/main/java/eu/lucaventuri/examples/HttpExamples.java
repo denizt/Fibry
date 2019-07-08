@@ -19,7 +19,7 @@ public class HttpExamples {
             os.close();
         }));
 
-        Stereotypes.threads().embeddedHttpServer(port+1, new Stereotypes.HttpStringWorker("/", ex -> "Hello world!"));
+        Stereotypes.threads().embeddedHttpServer(port + 1, new Stereotypes.HttpStringWorker("/", ex -> "Hello world!"));
 
         Consumer<Integer> master = Stereotypes.auto().workersAsConsumerCreator(System.out::println);
 
@@ -27,7 +27,7 @@ public class HttpExamples {
         master.accept(2);
         master.accept(3);
 
-        System.out.println("Waiting on http://localhost:" + port + "/ and on http://localhost:" + (port+1));
+        System.out.println("Waiting on http://localhost:" + port + "/ and on http://localhost:" + (port + 1));
 
         System.out.println("Fibers available: " + ActorUtils.areFibersAvailable());
     }

@@ -91,17 +91,6 @@ public class LinkedList<T> implements Iterable<T> {
         return head == null;
     }
 
-    public static class Node<T> {
-        public final T value;
-        private Node<T> next;
-        private Node<T> prev;
-
-        Node(T value) {
-            this.value = value;
-        }
-    }
-
-
     private void verify() {
         //assert (tail.get()==null && head.get() == null) || (tail.get() != null && head.get() != null);
     }
@@ -211,5 +200,15 @@ public class LinkedList<T> implements Iterable<T> {
         }
 
         return list;
+    }
+
+    public static class Node<T> {
+        public final T value;
+        private Node<T> next;
+        private Node<T> prev;
+
+        Node(T value) {
+            this.value = value;
+        }
     }
 }

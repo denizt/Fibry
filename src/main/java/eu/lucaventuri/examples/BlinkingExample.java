@@ -66,7 +66,7 @@ public class BlinkingExample {
 
         System.out.println("Actors created - waiting for them to finish");
 
-        for(SinkActor<Void> actor: listActors)
+        for (SinkActor<Void> actor : listActors)
             actor.waitForExit();
 
         long end = System.currentTimeMillis();
