@@ -3,11 +3,13 @@ package eu.lucaventuri.common;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
 
 /**
  * Some utilities
@@ -80,32 +82,17 @@ public final class SystemUtils {
      * @param parent starting directory
      * @return a list with all the files, recursively
      */
-    public static List<File> getAllFiles(File parent) {
-        List<File> files = new ArrayList<>();
-
-        for (File f : parent.listFiles()) {
-            if (f.isDirectory())
-                files.addAll(getAllFiles(f));
-            else
-                files.add(f);
-        }
-
-        return files;
+    public static List<File> getAllFiles(File parent) throws IOException {
+        if (parent == null) return Collections.emptyList();
+        return Files.list(parent.toPath()).map(Path::toFile).collect(Collectors.toList());
     }
 
     /**
      * @param parent starting directory
      * @return a list with all the files
      */
-    public static Stream<File> getAllFilesStream(File parent) {
-        List<File> files = getAllFiles(parent);
-
-        Builder<File> builder = Stream.<File>builder();
-
-        for (File file : files)
-            builder.accept(file);
-
-        return builder.build();
+    public static Stream<File> getAllFilesStream(File parent) throws IOException {
+        return Files.list(parent.toPath()).map(Path::toFile);
     }
 
     /**
