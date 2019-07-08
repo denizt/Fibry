@@ -5,6 +5,7 @@ import eu.lucaventuri.fibry.SinkActor;
 import eu.lucaventuri.fibry.Stereotypes;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -56,7 +57,8 @@ public class BlinkingExample {
             listActors.add(Stereotypes.auto().runOnce(() -> {
                 for (int j = 0; j < numCallsPerActor; j++) {
                     try (Socket clientSocket = new Socket(addr, port)) {
-                        clientSocket.getOutputStream().write(30);
+                        OutputStream os = clientSocket.getOutputStream();
+                        if (os != null) os.write(30);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
